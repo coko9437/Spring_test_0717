@@ -1,6 +1,8 @@
 package com.busanit501.boot_test1.service;
 
 import com.busanit501.boot_test1.dto.WeatherDTO;
+import com.busanit501.boot_test1.mapper.WeatherCodeMapper;
+import lombok.extern.log4j.Log4j2;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +13,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
 @Service
+@Log4j2
 public class WeatherServiceImpl implements WeatherService {
 
 
@@ -36,12 +39,14 @@ public class WeatherServiceImpl implements WeatherService {
             JSONObject weather = json.getJSONObject("current_weather");
 
             String temperature = String.valueOf(weather.getDouble("temperature"));
-            String description = "구름 많음"; // 상태 설명은 없어서 하드코딩
+            int code = weather.getInt("weathercode");
+            String info = WeatherCodeMapper.getInfo(code);
 
-            return new WeatherDTO(temperature, description);
+            return new WeatherDTO(temperature, info);
 
         } catch (Exception e) {
-            return new WeatherDTO("N/A", "불러오기 실패");
+            log.error("날씨 정보 가져오기 실패", e);
+            return new WeatherDTO("온도 오류", "상태 오류");
         }
     }
 }

@@ -21,6 +21,6 @@ public class WeatherServiceTest {
         WeatherDTO dto = weatherService.getWeather(lat, lon);
 
         log.info("온도 : " + dto.getTemperature());
-        log.info("상태 : " + dto.getDescription());
+        log.info("상태 : " + dto.getInfo());
     }
 }

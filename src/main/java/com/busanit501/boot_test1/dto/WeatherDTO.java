@@ -10,5 +10,5 @@ import lombok.NoArgsConstructor;
 public class WeatherDTO {
 
     private String temperature;
-    private String description;
+    private String info;
 }

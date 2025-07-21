@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const weatherModal = document.getElementById("weatherModal");
     const closeBtn = document.getElementById("closeBtn");
     const temperatureEl = document.getElementById("temperature");
-    const descriptionEl = document.getElementById("description");
+    const infoEl = document.getElementById("info");
 
     // 버튼 클릭 시 실행
     weatherBtn.addEventListener("click", function () {
@@ -15,8 +15,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 fetch(`/weather?lat=${lat}&lon=${lon}`)
                     .then(response => response.json())
                     .then(data => {
-                        temperatureEl.textContent = `온도: ${data.temperature}°C`;
-                        descriptionEl.textContent = `상태: ${data.description}`;
+                        temperatureEl.textContent = `온도 : ${data.temperature}°C`;
+                        infoEl.textContent = `상태 : ${data.info}`;
                         weatherModal.style.display = "block";
                     })
                     .catch(error => {
