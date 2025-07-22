@@ -18,11 +18,9 @@ public class Board extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long bno;
-
     private String title;
     private String content;
     private String writer;
-
     //연관관계 설정
     @OneToMany(mappedBy = "board", cascade = {CascadeType.ALL}
     ,fetch = FetchType.LAZY, orphanRemoval = true)

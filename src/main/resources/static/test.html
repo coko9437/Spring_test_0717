@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>공공데이터 API 호출 테스트</title>
+  <style>
+    #data-container {
+      margin-top: 20px;
+    }
+    .item {
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      padding: 10px;
+      margin-bottom: 10px;
+      background-color: #f9f9f9;
+    }
+    .item h3 {
+      margin: 0 0 5px;
+    }
+    .item p {
+      margin: 2px 0;
+    }
+  </style>
+</head>
+<body>
+<h2>📍 부산 모범음식점 정보</h2>
+<button id="fetchBtn">데이터 불러오기</button>
+<div id="data-container"></div>
+
+<script>
+  document.getElementById('fetchBtn').addEventListener('click', () => {
+    fetch('/api/publicdata?pageNo=1&numOfRows=10')
+            .then(res => {
+              if (!res.ok) {
+                throw new Error('네트워크 오류');
+              }
+              return res.json();
+            })
+            .then(data => {
+              console.log(data);
+              const items = data.response.body.items.item;
+              displayItems(items);
+            })
+            .catch(err => {
+              console.error('오류 발생:', err);
+              alert('데이터 호출 중 오류가 발생했습니다.');
+            });
+  });
+
+  function displayItems(items) {
+    const container = document.getElementById('data-container');
+    container.innerHTML = '';
+
+    if (!items || items.length === 0) {
+      container.innerHTML = '<p>데이터가 없습니다.</p>';
+      return;
+    }
+
+    items.forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'item';
+      div.innerHTML = `
+          <h3>${item.bsnsNm}</h3>
+          <p><strong>주소:</strong> ${item.addrRoad || item.addrJibun}</p>
+          <p><strong>전화:</strong> ${item.tel || '없음'}</p>
+          <p><strong>주요메뉴:</strong> ${item.menu || '정보 없음'}</p>
+        `;
+      container.appendChild(div);
+    });
+  }
+</script>
+</body>
+</html>

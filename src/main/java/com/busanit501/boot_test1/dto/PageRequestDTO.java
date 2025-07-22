@@ -39,14 +39,6 @@ public class PageRequestDTO { // 페이징정보와 검색정보 담기
     public Pageable getPageable(String... props) {
         return PageRequest.of(this.page - 1, this.size, Sort.by(props).descending());
     }
-
-    // 쿼리스트링
-    //http://localhost:8080/todo/list
-//     ?page=1
-//     &size=10
-//     &type=twc
-//     &keyword=lsy
-    // link = "page=1&size=10&type=twc&keyword=lsy"
     public String getLink() {
         if (link == null || link.isEmpty()) {
             StringBuilder builder = new StringBuilder();
@@ -68,6 +60,4 @@ public class PageRequestDTO { // 페이징정보와 검색정보 담기
         }
         return link;
     }
-
-
 }
