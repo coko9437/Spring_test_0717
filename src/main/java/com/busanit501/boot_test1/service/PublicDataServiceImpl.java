@@ -4,6 +4,7 @@ import com.busanit501.boot_test1.dto.PageRequestDTO;
 import com.busanit501.boot_test1.dto.publicData.PublicDataDTO;
 import com.busanit501.boot_test1.dto.publicData.PublicDataResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,54 +20,101 @@ import java.util.stream.Collectors;
 @Service
 @Log4j2
 @RequiredArgsConstructor
-public class PublicDataServiceImpl implements PublicDataService{
+public class PublicDataServiceImpl implements PublicDataService {
 
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
+    private final XmlMapper xmlMapper = new XmlMapper();
 
     @Value("${publicdata.service-key}")
     private String serviceKey;
 
-    @Override
-    public List<PublicDataDTO> getPublicData(PageRequestDTO pageRequestDTO) {
-
+    private String callApi(int pageNo, int numOfRows) {
         URI uri = UriComponentsBuilder.fromHttpUrl("https://apis.data.go.kr/6260000/BusanTblFnrstrnStusService/getTblFnrstrnStusInfo")
                 .queryParam("_type", "json")
                 .queryParam("serviceKey", serviceKey)
-                .queryParam("numOfRows", pageRequestDTO.getSize())
-                .queryParam("pageNo", pageRequestDTO.getPage())
+                .queryParam("numOfRows", numOfRows)
+                .queryParam("pageNo", pageNo)
                 .build(true)
                 .toUri();
 
-//        log.info("요청 URI 1 : {}", uri);
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
 
+        log.info("API 호출 URI: {}", uri.toString());
+        log.info("헤더: {}", headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.GET, entity, String.class);
+
+        log.info("응답 상태 코드: {}", response.getStatusCode());
+        log.info("응답 헤더: {}", response.getHeaders());
+        log.info("응답 본문: {}", response.getBody());
+
+        String responseBody = response.getBody();
+
+//        if (!responseJson.trim().startsWith("{")) {
+//            throw new RuntimeException("API 응답이 JSON이 아님:\n" + responseJson);
+//        }
+
+        return responseBody;
+    }
+
+    @Override
+    public List<PublicDataDTO> getPublicData(PageRequestDTO dto) {
+        return getPublicData(dto.getPage(), dto.getSize());
+    }
+//        try {
+//            String responseBody = callApi(dto.getPage(), dto.getSize());
+//
+
+    /// /            PublicDataResponse wrapper = objectMapper.readValue(responseJson, PublicDataResponse.class);
+//            PublicDataResponse wrapper = xmlMapper.readValue(responseBody, PublicDataResponse.class);
+//            return wrapper.getResponse().getBody().getItems().getItem()
+//                    .stream()
+//                    .map(item -> PublicDataDTO.builder()
+//                            .bsnsSector(item.getBsnsSector())
+//                            .bsnsCond(item.getBsnsCond())
+//                            .bsnsNm(item.getBsnsNm())
+//                            .addrRoad(item.getAddrRoad())
+//                            .addrJibun(item.getAddrJibun())
+//                            .menu(item.getMenu())
+//                            .tel(item.getTel())
+//                            .specDate(item.getSpecDate())
+//                            .ovrdDate(item.getOvrdDate())
+//                            .gugun(item.getGugun())
+//                            .dataDay(item.getDataDay())
+//                            .lat(item.getLat())
+//                            .lng(item.getLng())
+//                            .build())
+//                    .collect(Collectors.toList());
+//
+//        } catch (Exception e) {
+//            log.error("공공데이터 파싱 오류", e);
+//            throw new RuntimeException("공공데이터 파싱 실패", e);
+//        }
+//    }
+    @Override
+    public PublicDataResponse fetchData(int pageNo, int numOfRows) {
         try {
-            HttpHeaders headers = new HttpHeaders();
-            headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);  // JSON 응답 요청
+            String responseBody = callApi(pageNo, numOfRows);
+//            return objectMapper.readValue(responseJson, PublicDataResponse.class);
+            return xmlMapper.readValue(responseBody, PublicDataResponse.class);
+        } catch (Exception e) {
+            log.error("fetchData 오류", e);
+            throw new RuntimeException("fetchData 중 오류 발생", e);
+        }
+    }
 
-            HttpEntity<Void> entity = new HttpEntity<>(headers);
+    @Override
+    public List<PublicDataDTO> getPublicData(int pageNo, int numOfRows) {
+        try {
+            String responseBody = callApi(pageNo, numOfRows);
 
-            // API 호출 (GET 방식)
-            ResponseEntity<String> response = restTemplate.exchange(
-                    uri,
-                    HttpMethod.GET,
-                    entity,
-                    String.class
-            );
+            // XML로 파싱한다고 가정 (xmlMapper 사용)
+            PublicDataResponse wrapper = xmlMapper.readValue(responseBody, PublicDataResponse.class);
 
-            String responseJson = response.getBody();
-
-            // 👉 2. 응답 내용 출력 및 JSON 여부 확인
-            log.info("⚠️ 응답 내용 시작 ⚠️\n{}\n⚠️ 응답 내용 끝 ⚠️", responseJson);
-            if (!responseJson.trim().startsWith("{")) {
-                throw new RuntimeException("API 응답이 JSON이 아닙니다. 실제 응답:\n" + responseJson);
-            }
-
-            // JSON → Java 객체로 변환
-            PublicDataResponse wrapper = objectMapper.readValue(responseJson, PublicDataResponse.class);
-
-            // 내부 구조에 따라 DTO 리스트 추출
-            List<PublicDataDTO> dtoList = wrapper.getResponse()
+            return wrapper.getResponse()
                     .getBody()
                     .getItems()
                     .getItem()
@@ -87,53 +135,10 @@ public class PublicDataServiceImpl implements PublicDataService{
                             .lng(item.getLng())
                             .build())
                     .collect(Collectors.toList());
-            log.info("최종 호출 URL 2 : {}", uri.toString());
-            return dtoList;
 
         } catch (Exception e) {
             log.error("공공데이터 파싱 오류", e);
             throw new RuntimeException("공공데이터 파싱 실패", e);
-        }
-    }
-
-    @Override
-    public PublicDataResponse fetchData(int pageNo, int numOfRows) {
-        URI uri = UriComponentsBuilder.fromHttpUrl("https://apis.data.go.kr/6260000/BusanTblFnrstrnStusService/getTblFnrstrnStusInfo")
-                .queryParam("_type", "json")
-                .queryParam("serviceKey", serviceKey)
-                .queryParam("numOfRows", numOfRows)
-                .queryParam("pageNo", pageNo)
-                .build(true)
-                .toUri();
-
-        try {
-            HttpHeaders headers = new HttpHeaders();
-            headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
-
-            HttpEntity<Void> entity = new HttpEntity<>(headers);
-
-            ResponseEntity<String> response = restTemplate.exchange(
-                    uri,
-                    HttpMethod.GET,
-                    entity,
-                    String.class
-            );
-
-            String responseJson = response.getBody();
-
-            log.info("⚠️ fetchData 응답 내용 ⚠️\n{}", responseJson);
-
-            if (!responseJson.trim().startsWith("{")) {
-                throw new RuntimeException("API 응답이 JSON이 아닙니다. 실제 응답:\n" + responseJson);
-            }
-
-            // PublicDataResponse는 내부에 'response' 필드를 갖고 있으므로 이대로 deserialize 가능
-            PublicDataResponse publicDataResponse = objectMapper.readValue(responseJson, PublicDataResponse.class);
-            return publicDataResponse;
-
-        } catch (Exception e) {
-            log.error("fetchData 오류 발생", e);
-            throw new RuntimeException("fetchData 중 오류 발생", e);
         }
     }
 }

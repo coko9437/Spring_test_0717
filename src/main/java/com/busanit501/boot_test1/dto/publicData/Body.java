@@ -1,16 +1,12 @@
 package com.busanit501.boot_test1.dto.publicData;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
-import lombok.Data;
-//@XmlElement(name = "item")
-@XmlRootElement(name = "items")
-@XmlAccessorType(XmlAccessType.FIELD)
+import lombok.*;
+
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Body   {
-    @XmlElement(name = "item")
+
     private Items items;
     private int numOfRows;
     private int pageNo;

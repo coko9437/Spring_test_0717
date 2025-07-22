@@ -36,18 +36,11 @@ public class PageResponseDTO<E> {
         this.total = total;
         this.dtoList = dtoList;
 
-        // 5) 시작 페이지
-// 6) 끝 페이지
-// 7) 이전 페이지 여부
-// 8) 다음 페이지 여부
         this.end = (int)(Math.ceil(this.page/10.0)) * 10;
         this.start = this.end - 9 ;
         int last = (int)(Math.ceil((total/(double)size)));
         this.end = end > last ? last : end;
         this.prev = this.start > 1;
         this.next = total > this.end * this.size;
-
     }
-
-
 }

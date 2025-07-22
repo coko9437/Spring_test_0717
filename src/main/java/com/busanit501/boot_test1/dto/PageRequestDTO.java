@@ -18,7 +18,6 @@ public class PageRequestDTO { // 페이징정보와 검색정보 담기
 
     @Builder.Default
     private int page = 1;
-
     @Builder.Default
     private int size = 10;
 

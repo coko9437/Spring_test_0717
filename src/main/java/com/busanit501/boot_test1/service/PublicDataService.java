@@ -9,4 +9,6 @@ import java.util.List;
 public interface PublicDataService {
     List<PublicDataDTO> getPublicData(PageRequestDTO pageRequestDTO);
     PublicDataResponse fetchData(int pageNo, int numOfRows);
+
+    List<PublicDataDTO> getPublicData(int pageNo, int numOfRows);
 }
