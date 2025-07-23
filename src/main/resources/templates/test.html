@@ -2,19 +2,15 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8" />
-    <title>모범음식점 정보</title>
+    <title>Public Data XML 테스트</title>
 </head>
 <body>
-<h1>모범음식점 정보</h1>
-<ul id="restaurantList"></ul>
+<h1>부산 모범 음식점 현황</h1>
 
-<!-- JS 파일 연결 -->
+<button id="loadBtn">데이터 불러오기</button>
+
+<div id="result"></div>
+
 <script src="/js/publicdata.js"></script>
-<script>
-    // 페이지 로드 시 데이터 요청
-    window.onload = function () {
-        loadData();
-    };
-</script>
 </body>
 </html>

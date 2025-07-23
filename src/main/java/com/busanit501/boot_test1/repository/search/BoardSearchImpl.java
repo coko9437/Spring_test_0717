@@ -94,23 +94,17 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
     }
 
     @Override
-    public Page<BoardListReplyCountDTO> searchWithReplyCount(String[] types, String keyword, Pageable pageable) {
-        // 순서1, 고정
+    public Page<BoardListReplyCountDTO> searchWithReplyCount
+            (String[] types, String keyword, Pageable pageable) {
+
         QBoard board = QBoard.board; // (board)
         QReply reply = QReply.reply; // (reply)
-        // 순서2, 고정
+
         JPQLQuery<Board> query = from(board); // select .. from board
 
-        // 순서3,
-        // left join,-> 게시글의 댓글이 없는 경우도 표기해야함. 그래서, 사용함.
         query.leftJoin(reply).on(reply.board.eq(board));
         query.groupBy(board);
 
-
-        // 순서4, 옵션
-        // where 조건절 추가. 위의 내용 재사용.
-        // where 조건절 , BooleanBuilder 를 이용해서 조건 추가.
-        // select .. from board where .... 검색조건 : 1) types, 2) keyword
         if ((types != null && types.length > 0) && keyword != null) {
             // or , 조건, and 조건을 사용하기 싶다. 묶기도 쉽다.
             BooleanBuilder builder = new BooleanBuilder();
@@ -126,17 +120,13 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
                     case "w":
                         builder.or(board.writer.contains(keyword));
                         break;
-                } // end switch
-            } // end for
+                }
+            }
             query.where(builder); // select * from board where like %keyword%
         } //end if
-        // bno >0 조건 추가히기.
+
         query.where(board.bno.gt(0L));
 
-        // 순서5,
-        //   Projections.bean 를 이용해서 QueryDSL로, 자동 형변환하기.
-        // DTO <-> Entity(VO), 서비스에서 모델 맵퍼 이용해서, 변환
-        // 이번에는 자동으로 변환 해보기.
         JPQLQuery<BoardListReplyCountDTO> dtoQuery = query.select(
                 Projections.bean(BoardListReplyCountDTO.class,
                         board.bno,
@@ -144,16 +134,11 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
                         board.writer,
                         board.regDate,
                         reply.count().as("replyCount")
-                )//bean
+                )
         );// select
 
-        // 순서6,
-        // 기존의 1)페이징 정보 2) 검색정보 + 3) 댓글의 갯수
-        // 페이징 적용하기.
         this.getQuerydsl().applyPagination(pageable,dtoQuery);
 
-        // 순서7,
-        // 실제 디비를 가져오기 작업, fetch 작업.
         List<BoardListReplyCountDTO> dtoList = dtoQuery.fetch();
         long count = dtoQuery.fetchCount();
 

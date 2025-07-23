@@ -41,6 +41,11 @@ public class PublicDataServiceImpl implements PublicDataService {
         XmlMapper xmlMapper = new XmlMapper();
         PublicDataResponse publicDataResponse = xmlMapper.readValue(xml, PublicDataResponse.class);
 
+        if (!"00".equals(publicDataResponse.getHeader().getResultCode())) {
+            throw new IllegalStateException("공공데이터 API 호출 실패: "
+                    + publicDataResponse.getHeader().getResultMsg());
+        }
+
         // 페이징 관련 데이터 추출
         PublicDataPage page = new PublicDataPage();
         page.setItems(publicDataResponse.getBody().getItems().getItem());
@@ -52,5 +57,23 @@ public class PublicDataServiceImpl implements PublicDataService {
         log.info("전체 데이터 개수: {}", page.getTotalCount());
 
         return page;
+    }
+
+    @Override
+    public String getRawPublicDataXml(int pageNo, int numOfRows) throws Exception {
+        String apiUrl = "http://apis.data.go.kr/6260000/BusanTblFnrstrnStusService/getTblFnrstrnStusInfo"
+                + "?serviceKey=" + serviceKey
+                + "&numOfRows=" + numOfRows
+                + "&pageNo=" + pageNo;
+
+        URI uri = new URI(apiUrl);
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder(uri).build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        String xml = response.body();
+        log.info("== API 원본 XML 응답 ==\n{}", xml);
+
+        return xml;
     }
 }

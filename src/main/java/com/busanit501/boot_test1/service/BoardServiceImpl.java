@@ -88,7 +88,8 @@ public class BoardServiceImpl implements BoardService{
     }
 
     @Override
-    public PageResponseDTO<BoardListReplyCountDTO> listWithReplyCount(PageRequestDTO pageRequestDTO) { //  1) 페이징 2) 검색 3) 댓글 갯수 버전
+    public PageResponseDTO<BoardListReplyCountDTO> listWithReplyCount
+            (PageRequestDTO pageRequestDTO) { //  1) 페이징 2) 검색 3) 댓글 갯수 버전
         // type = "twc" -> getTypes -> {"t","c","w"}
         // 화면으로 부터 전달 받은,
         // 1)검색 조건과 2)페이징 정보
@@ -97,7 +98,8 @@ public class BoardServiceImpl implements BoardService{
         Pageable pageable = pageRequestDTO.getPageable("bno");
 
 
-        Page<BoardListReplyCountDTO> result = boardRepository.searchWithReplyCount(types,keyword,pageable);
+        Page<BoardListReplyCountDTO> result =
+                boardRepository.searchWithReplyCount(types,keyword,pageable);
 
 
         return PageResponseDTO.<BoardListReplyCountDTO>withAll()

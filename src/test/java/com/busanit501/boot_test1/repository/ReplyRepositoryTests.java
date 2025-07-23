@@ -2,6 +2,7 @@ package com.busanit501.boot_test1.repository;
 
 import com.busanit501.boot_test1.domain.Board;
 import com.busanit501.boot_test1.domain.Reply;
+
 import jakarta.transaction.Transactional;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
@@ -19,6 +20,7 @@ import java.util.List;
 @SpringBootTest
 @Log4j2
 public class ReplyRepositoryTests {
+
     @Autowired
     private ReplyRepository replyRepository;
     @Autowired
@@ -26,29 +28,30 @@ public class ReplyRepositoryTests {
 
     @Test
     public void testInsert() {
-        // 1) 실제 부모 Board(bno)존재
-        Long bno = 208L;
+        // 댓글 작성 테스트,
+        // 준비물 1) 실제 부모 게시글 존재,
+        Long bno = 108L;
 
-        //Board에 더미 데이터 삽입준비
+        //부모 게시글 더미 데이터,
         Board board = Board.builder()
                 .bno(bno).build();
 
-        // 댓글 더미 데이터
+        // 댓글의 더미 데이터
         Reply reply = Reply.builder()
-                // 부모 게시글 객체는 반드시 필요
+                // 부모 게시글 객체는 반드시 필요함.
                 .board(board)
-                .replyText("샘플로 내용 넣는중")
-                .replyer("샘플로 작성자 넣는중")
+                .replyText("샘플 게시글 내용4")
+                .replyer("샘플 댓글 작성자4")
                 .build();
 
         replyRepository.save(reply);
     }
 
     @Test
-    @Transactional // Reply에서, @ToString(exclude = "board")
-
+    @Transactional // 엔티티 클래스에서, @ToString(exclude = "board")
+    // (exclude = "board") 제외시, 사용하기.
     public void testBoardReplies() {
-        Long bno = 207L;
+        Long bno = 109L;
         // 페이징 정보 담기.
         Pageable pageable = PageRequest.of(0, 10, Sort.by("rno").descending());
         Page<Reply> result = replyRepository.listOfBoard(bno, pageable);
@@ -63,12 +66,12 @@ public class ReplyRepositoryTests {
     @Test
     @Transactional
     @Rollback(false)
-    public void testInsertMany() { // 더미데이터 넣기.
-        Long bno = 206L;
+    public void testInsertMany() {
+        Long bno = 101L;
         Board board = boardRepository.findById(bno).orElseThrow();
         List<Reply> replies = new ArrayList<>();
 
-        for (int i = 0; i < 91; i++) {
+        for (int i = 0; i < 100; i++) {
             replies.add(Reply.builder()
                     .board(board)
                     .replyText("더미 댓글 내용 : " + i)

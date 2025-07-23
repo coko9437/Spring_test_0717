@@ -77,7 +77,7 @@ public class ReplyController {
 
     // 댓글 삭제
     // http://localhost:8080/replies/612
-    @Tag(name = "댓글 삭제", description = "댓글 삭제 레스트 버전 delete 방식")
+    @Tag(name = "댓글 삭제", description = "댓글 삭제")
     @DeleteMapping(value = "/{rno}")
     public Map<String,Long> remove(@PathVariable Long rno) {
         log.info("ReplyController에서 작업중, 삭제, 전달받은 rno 확인 :  " + rno);

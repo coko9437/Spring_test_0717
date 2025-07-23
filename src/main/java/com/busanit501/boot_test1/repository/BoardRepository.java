@@ -2,15 +2,10 @@ package com.busanit501.boot_test1.repository;
 
 import com.busanit501.boot_test1.domain.Board;
 import com.busanit501.boot_test1.repository.search.BoardSearch;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import java.util.List;
 import java.util.Optional;
 
 // 설정한 인터페이스(BoardSearch)를 여기에 적용하기.
