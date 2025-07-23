@@ -5,29 +5,24 @@ import com.busanit501.boot_test1.dto.publicData.PublicDataDTO;
 import com.busanit501.boot_test1.dto.publicData.PublicDataResponse;
 import com.busanit501.boot_test1.service.PublicDataService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import com.busanit501.boot_test1.dto.publicData.PublicDataPage;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-
 @RestController
-@RequestMapping("/api/publicdata")
+@RequiredArgsConstructor
+@RequestMapping("/")
 public class PublicDataController {
+
     private final PublicDataService publicDataService;
 
-    public PublicDataController(PublicDataService publicDataService) {
-        this.publicDataService = publicDataService;
-    }
-
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)  // JSON 응답 명시
-    public ResponseEntity<List<PublicDataDTO>> getPublicData(
+    @GetMapping("/public-data")
+    public List<PublicDataDTO> getPublicData(
             @RequestParam(defaultValue = "1") int pageNo,
-            @RequestParam(defaultValue = "10") int numOfRows) {
+            @RequestParam(defaultValue = "10") int numOfRows)
+                throws Exception {
 
-        List<PublicDataDTO> dataList = publicDataService.getPublicData(pageNo, numOfRows);
-
-        return ResponseEntity.ok(dataList);
+        return publicDataService.getPublicData(pageNo, numOfRows).getItems();
     }
 }

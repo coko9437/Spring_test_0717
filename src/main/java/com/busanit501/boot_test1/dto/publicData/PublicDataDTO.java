@@ -1,27 +1,53 @@
 package com.busanit501.boot_test1.dto.publicData;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlRootElement;
-import lombok.Builder;
+
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
-@Builder
-@XmlRootElement(name = "item")
-@XmlAccessorType(XmlAccessType.FIELD)
+@NoArgsConstructor
+@AllArgsConstructor
+@JacksonXmlRootElement(localName = "item")
 public class PublicDataDTO {
-    private String bsnsSector;     // 업종
-    private String bsnsCond;       // 업태
-    private String bsnsNm;         // 업소명
-    private String addrRoad;       // 도로명 주소
-    private String addrJibun;      // 지번 주소
-    private String menu;           // 대표 메뉴
-    private String tel;            // 전화번호
-    private String specDate;       // 지정일자
-    private String ovrdDate;       // 재지정일자
-    private String gugun;          // 구군명
-    private String dataDay;        // 데이터 기준일자
-    private double lat;            // 위도
-    private double lng;            // 경도
+    @JacksonXmlProperty(localName = "bsnsSector")
+    private String bsnsSector;
+
+    @JacksonXmlProperty(localName = "bsnsCond")
+    private String bsnsCond;
+
+    @JacksonXmlProperty(localName = "bsnsNm")
+    private String bsnsNm;
+
+    @JacksonXmlProperty(localName = "addrRoad")
+    private String addrRoad;
+
+    @JacksonXmlProperty(localName = "addrJibun")
+    private String addrJibun;
+
+    @JacksonXmlProperty(localName = "menu")
+    private String menu;
+
+    @JacksonXmlProperty(localName = "tel")
+    private String tel;
+
+    @JacksonXmlProperty(localName = "specDate")
+    private String specDate;
+
+    @JacksonXmlProperty(localName = "ovrdDate")
+    private String ovrdDate;
+
+    @JacksonXmlProperty(localName = "gugun")
+    private String gugun;
+
+    @JacksonXmlProperty(localName = "dataDay")
+    private String dataDay;
+
+    @JacksonXmlProperty(localName = "lat")
+    private String lat;
+
+    @JacksonXmlProperty(localName = "lng")
+    private String lng;
 }

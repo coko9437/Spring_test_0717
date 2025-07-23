@@ -16,19 +16,5 @@ public class BootTest1Application {
         SpringApplication.run(BootTest1Application.class, args);
     }
 
-    @Bean
-    public RestTemplate restTemplate() {
-        RestTemplate restTemplate = new RestTemplate();
-
-        // XML 컨버터 추가
-        restTemplate.getMessageConverters().add(new MappingJackson2XmlHttpMessageConverter(new XmlMapper()));
-
-        return restTemplate;
-    }
-
-    @Bean
-    public XmlMapper xmlMapper() {
-        return new XmlMapper();
-    }
 
 }

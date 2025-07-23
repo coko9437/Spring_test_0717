@@ -1,14 +1,17 @@
 package com.busanit501.boot_test1.dto.publicData;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import lombok.*;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class PublicDataResponse {
 
-//    @JsonProperty("response")
-    private GetTblFnrstrnStusInfo response;
+@Data
+public class PublicDataResponse {
+    @JacksonXmlProperty(localName = "header")
+    private Header header;
+
+    @JacksonXmlProperty(localName = "body")
+    private Body body;
 }
-// PublicDataResponse → GetTblFnrstrnStusInfo → Body → Items → List<Item>
+// PublicDataResponse → GetTblFnrstrnStusInfo → Header → Body → Item

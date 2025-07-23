@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>부산 모범음식점 정보</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        #result ul { list-style: none; padding: 0; }
+        #result li { margin-bottom: 10px; border-bottom: 1px solid #ccc; padding: 10px 0; }
+        button { padding: 10px 20px; }
+    </style>
+</head>
+<body>
+<h2>📍 부산 모범음식점 리스트</h2>
+<button id="loadBtn">불러오기</button>
+<a href="/api/public-data" target="_blank">맛집 데이터 보기</a>
+<div id="result"><ul id="dataList"></ul></div>
+
+
+<script>
+    document.getElementById('loadBtn').addEventListener('click', () => {
+        fetch('/api/publicdata?pageNo=1&numOfRows=10')
+            .then(res => {
+                if (!res.ok) throw new Error('서버 오류');
+                return res.json();
+            })
+            .then(data => {
+                const list = document.getElementById('dataList');
+                list.innerHTML = ''; // 초기화
+
+                if (data.length === 0) {
+                    list.innerHTML = '<li>데이터가 없습니다.</li>';
+                    return;
+                }
+
+                data.forEach(item => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                            <strong>${item.bsnsNm}</strong><br/>
+                            주소: ${item.addrRoad || item.addrJibun}<br/>
+                            전화번호: ${item.tel || '없음'}<br/>
+                            업종: ${item.bsnsSector || '정보 없음'}
+                        `;
+                    list.appendChild(li);
+                });
+            })
+            .catch(err => {
+                alert('데이터 불러오기 실패: ' + err.message);
+            });
+    });
+</script>
+</body>
+</html>

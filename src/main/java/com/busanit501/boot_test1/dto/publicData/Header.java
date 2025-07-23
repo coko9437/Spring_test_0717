@@ -4,9 +4,8 @@ import lombok.*;
 
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class Header {
-    private String resultCode;
     private String resultMsg;
+    private String resultCode;
+
 }
